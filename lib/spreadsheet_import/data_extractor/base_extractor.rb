@@ -11,7 +11,6 @@ module SpreadsheetImport
       @only_extract_valid_rows = options[:only_extract_valid_rows]
     end
 
-
     def spreadsheet_rows
       reader.each_row(mapping.values) do |row|
         processed_row = process_row(row)

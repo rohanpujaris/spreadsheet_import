@@ -1,6 +1,6 @@
 module SpreadsheetImport
   class BaseImporter
-    attr_reader :model, :operation, :data_extractor
+    attr_reader :model, :data_extractor
 
     def initialize(model, options = {})
       @model = model
@@ -20,7 +20,7 @@ module SpreadsheetImport
     protected
 
     def handle_valid_row(row)
-      unless record = save_or_update(row)
+      unless record = create_or_update_record(row)
         handle_validation_failure(record)
       end
     end
