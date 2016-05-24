@@ -77,31 +77,27 @@ describe SpreadsheetImport::BaseExtractor do
 
   describe 'Protected Methods' do
     describe '#process_row' do
-      it 'instantiates row_processor with unprocessed_row and calls process method on it' do
+      it 'call process method on row_processor with unprocessed_row' do
         row_processor = Class.new do
-          def initialize(_); end
-          def process; end
+          def self.process; end
         end
         extractor = described_class.new(reader, {}, row_processor: row_processor)
 
         allow(extractor).to receive(:unprocessed_row).and_return(:row)
-        expect_any_instance_of(row_processor).to receive(:initialize).with(:row)
-        expect_any_instance_of(row_processor).to receive(:process)
-        extractor.send(:process_row, nil)
+        expect(row_processor).to receive(:process).with(:row, extractor)
+        extractor.send(:process_row, :row)
       end
     end
 
     describe '#valid_row?' do
       it 'instantiates row_validator with row and calls validate method on it' do
         row_validator = Class.new do
-          def initialize(_); end
-          def validate; end
+          def self.validate; end
         end
         extractor = described_class.new(
           reader, {}, row_validator: row_validator)
 
-        expect_any_instance_of(row_validator).to receive(:initialize).with(:row)
-        expect_any_instance_of(row_validator).to receive(:validate)
+        expect(row_validator).to receive(:validate).with(:row, extractor)
         extractor.send(:valid_row?, :row)
       end
     end

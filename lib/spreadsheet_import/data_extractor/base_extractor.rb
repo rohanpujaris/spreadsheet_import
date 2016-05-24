@@ -36,7 +36,7 @@ module SpreadsheetImport
     def process_row(row)
       unprocessed_row = unprocessed_row(row)
       if row_processor
-        row_processor.new(unprocessed_row).process
+        row_processor.process(unprocessed_row, self)
       else
         process_row_before_import(unprocessed_row)
       end
@@ -44,7 +44,7 @@ module SpreadsheetImport
 
     def valid_row?(row)
       if row_validator
-        row_validator.new(row).validate
+        row_validator.validate(row, self)
       else
         valid_row_for_import?(row)
       end
