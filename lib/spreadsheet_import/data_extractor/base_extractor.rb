@@ -54,7 +54,7 @@ module SpreadsheetImport
       row
     end
 
-    def valid_row_for_import?(row)
+    def valid_row_for_import?(_row)
       true
     end
   end
