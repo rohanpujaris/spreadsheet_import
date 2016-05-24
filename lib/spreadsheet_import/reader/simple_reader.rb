@@ -13,7 +13,7 @@ module SpreadsheetImport
     end
 
     def default_required_columns
-      spreadsheet.first_column.upto(spreadsheet.last_column).to_a
+      spreadsheet.first_column.upto(spreadsheet.last_column)
     end
 
     def each_row(required_columns = default_required_columns)
