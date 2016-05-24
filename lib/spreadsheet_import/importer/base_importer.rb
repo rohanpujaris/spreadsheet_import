@@ -20,13 +20,9 @@ module SpreadsheetImport
     protected
 
     def handle_valid_row(row)
-      unless record = create_or_update_record(row)
-        handle_validation_failure(record)
-      end
+      create_or_update_record(row)
     end
 
-    def handle_invalid_row; end
-
-    def handle_validation_failure; end
+    def handle_invalid_row(row); end
   end
 end

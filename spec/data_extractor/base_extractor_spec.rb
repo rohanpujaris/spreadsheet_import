@@ -13,7 +13,7 @@ describe SpreadsheetImport::BaseExtractor do
       end
     end
 
-    describe '#spreasheet_rows' do
+    describe '#spreadsheet_rows' do
       context 'only_extract_valid_rows is truthy' do
         let(:base_extractor) do
           described_class.new(reader, {city: 1, tax_rate: 3},

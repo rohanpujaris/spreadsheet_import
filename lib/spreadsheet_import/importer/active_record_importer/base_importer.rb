@@ -19,34 +19,50 @@ module SpreadsheetImport
         @skip_callbacks = options[:skip_callbacks]
       end
 
-      def find_duplicate_for_unique_by_attributes(row)
-        scoped_model.where(row.slice(*unique_by_attributes))
+      def find_duplicate_for_unique_by_attributes(data)
+        scoped_model.where(data.slice(*unique_by_attributes))
       end
 
-      def create_or_update_record(row)
+      def create_or_update_record(data)
         if unique_by_attributes
           if update_existing_record
-            duplicate_records = find_duplicate_for_unique_by_attributes(row)
-            duplicate_records.present? ? update_record(duplicate_records, row) : create_record(row)
+            duplicate_records = find_duplicate_for_unique_by_attributes(data)
+            duplicate_records.present? ? update_record(duplicate_records, data) : create_record(data)
           end
         else
-          create_record(row)
+          create_record(data)
         end
       end
 
       def create_record(data)
-        anoymous_model.create(data)
+        record = anoymous_model.new(data)
+        unless record.save
+          handle_validation_failure(record, data)
+        end
+        record
       end
 
       def update_record(records, data)
         if skip_validations && skip_callbacks
           records.update_all(data)
         else
-          records.map { |record| record.update_attributes(data) }.all?
+          update_only_if_data_changed(records, data)
+        end
+      end
+
+      def update_only_if_data_changed(records, data)
+        records.each do |record|
+          if data.any? { |name, value| record.read_attribute(name) != value }
+            unless record.update_attributes(data)
+              handle_validation_failure(record, data)
+            end
+          end
         end
       end
 
       protected
+
+      def handle_validation_failure(record, data); end
 
       def scoped_model
         scoped_unique ? model.send(scoped_unique) : model

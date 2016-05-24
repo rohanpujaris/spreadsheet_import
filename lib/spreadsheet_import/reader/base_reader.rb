@@ -1,6 +1,6 @@
 module SpreadsheetImport
   class BaseReader
-    attr_reader :file_url, :spreasheet, :start_row, :end_row
+    attr_reader :file_url, :spreadsheet, :start_row, :end_row
 
     def initialize(file_url, options = {})
       @file_url = file_url

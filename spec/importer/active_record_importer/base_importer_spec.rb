@@ -93,8 +93,7 @@ describe SpreadsheetImport::ActiveRecordImporter::BaseImporter do
       expect(user).to be_new_record
     end
 
-    it 'does not skip callbacks when skip_validations true and skip_callbacks is false' do
-    end
+    it 'does not skip callbacks when skip_validations true and skip_callbacks is false'
   end
 
   describe '#update_record' do
@@ -133,7 +132,6 @@ describe SpreadsheetImport::ActiveRecordImporter::BaseImporter do
       expect(user.reload.name).to_not be_nil
     end
 
-    it 'does not skip callbacks when skip_validations true and skip_callbacks is false' do
-    end
+    it 'does not skip callbacks when skip_validations true and skip_callbacks is false'
   end
 end

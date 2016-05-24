@@ -10,16 +10,16 @@ describe SpreadsheetImport::SimpleReader do
       expect(spreadsheet.start_row).to eq(1)
     end
 
-    it 'assigns last row count of spreasheet to end_row if nothing is provided' do
+    it 'assigns last row count of spreadsheet to end_row if nothing is provided' do
       expect(spreadsheet.end_row).to eq(4)
     end
   end
 
   describe '#each_row' do
     it 'yields each row if no argument is passed while object instantiation' do
-      spreasheet = described_class.new('spec/fixtures/files/tax.csv')
+      spreadsheet = described_class.new('spec/fixtures/files/tax.csv')
       all_rows = []
-      spreasheet.each_row do |row|
+      spreadsheet.each_row do |row|
         all_rows << row
       end
 
@@ -32,10 +32,10 @@ describe SpreadsheetImport::SimpleReader do
     end
 
     it 'yields rows start_row and end_row options' do
-      spreasheet = described_class.new('spec/fixtures/files/tax.csv',
+      spreadsheet = described_class.new('spec/fixtures/files/tax.csv',
         start_row: 2, end_row: 3)
       all_rows = []
-      spreasheet.each_row do |row|
+      spreadsheet.each_row do |row|
         all_rows << row
       end
 
@@ -46,9 +46,9 @@ describe SpreadsheetImport::SimpleReader do
     end
 
     it 'yields row with only required_columns' do
-      spreasheet = described_class.new('spec/fixtures/files/tax.csv')
+      spreadsheet = described_class.new('spec/fixtures/files/tax.csv')
       all_rows = []
-      spreasheet.each_row([1, 3]) do |row|
+      spreadsheet.each_row([1, 3]) do |row|
         all_rows << row
       end
 
