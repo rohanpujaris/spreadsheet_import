@@ -43,19 +43,13 @@ module SpreadsheetImport
       end
 
       def update_record(records, data)
-        if skip_validations && skip_callbacks
-          records.update_all(data)
-        else
-          update_only_if_data_changed(records, data)
-        end
+        update_only_if_data_changed(records, data)
       end
 
       def update_only_if_data_changed(records, data)
         records.each do |record|
           if data.any? { |name, value| record.read_attribute(name) != value }
-            unless record.update_attributes(data)
-              handle_validation_failure(record, data)
-            end
+            record.update_attributes(data)
           end
         end
       end
@@ -65,7 +59,7 @@ module SpreadsheetImport
       def handle_validation_failure(record, data); end
 
       def scoped_model
-        scoped_unique ? model.send(scoped_unique) : model
+        scoped_unique ? anoymous_model.send(scoped_unique) : anoymous_model
       end
 
       def anoymous_model
@@ -75,7 +69,7 @@ module SpreadsheetImport
         elsif skip_validations
           Class.new(model) do
             def self.name
-              "New#{superclass.name}"
+              "#{superclass.name}NoValidation"
             end
             reset_callbacks :validate
             reset_callbacks :validation
@@ -83,7 +77,7 @@ module SpreadsheetImport
         elsif skip_callbacks
           Class.new(model) do
             def self.name
-              "New#{superclass.name}"
+              "#{superclass.name}NoCallback"
             end
             CALLBACKS_TO_SKIP.each { |name| reset_callbacks(name) }
           end
