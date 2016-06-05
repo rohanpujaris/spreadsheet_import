@@ -21,8 +21,8 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'spreadsheet_import'
-gem 'simple-spreadsheet' # if want to use SpreadsheetImport::SimpleReader
-gem 'activerecord'       # if want to use any impoter in  SpreadsheetImport::ActiveRecordImporter
+gem 'simple-spreadsheet'  # if want to use SpreadsheetImport::SimpleReader
+gem 'activerecord'        # if want to use any impoter in  SpreadsheetImport::ActiveRecordImporter
 gem 'activerecord-import' # if want to use SpreadsheetImport::ActiveRecordImporter::BulkImporter
 ```
 
@@ -36,11 +36,12 @@ And then execute:
   SpreadsheetImport.import(file_url, mapping, model, options)
 ```
 - file_url: url of csv file
-- mapping: database column name to spreadsheet column number matching.
+- mapping: database column name to spreadsheet column number mapping hash.
 
   Example:
 
   {city: 1, tax_rate: 3}
+
   city and tax_rate are column name in database. 1, 3 are column number in spreadsheet file.
 - model: model class for which spreadsheet needs to be imported
 - options: Hash of options
@@ -50,10 +51,12 @@ And then execute:
 
 ## Details
 - SpreadsheetImport::BaseReader:
-Class inheriting from BaseReader should define `each_row(required_columns)` method. Method should accept column position as array and yield value of those columns as array for each spreadsheet row. It is upto you to implement this functionality anyway you want. BaseReader also accepts start_row(row from where reader should start reading) and end_row(row at which reader should end reading) as option while intiantiating reader. So you can also handle start_row and end_row option in `each_row` method.
+
+  Class inheriting from BaseReader should define `each_row(required_columns)` method. Method should accept column position as array and yield value of those columns as array for each spreadsheet row. It is upto you to implement this functionality anyway you want. BaseReader also accepts start_row(row from where reader should start reading) and end_row(row at which reader should end reading) as option while intiantiating reader. So you can also handle start_row and end_row option in `each_row` method.
 
 - SpreadsheetImport::SimpleReader:
-If you want to use this reader add simple-spreadshee gem to your project. If you dont want to use simple spreadsheet gem or have any alternative gem to read spreadsheet file then you can create your own reader class by inheriting from BaseReader. You can call all simple-spreadsheet gem method on SimpleReader object.
+
+   If you want to use this reader add simple-spreadshee gem to your project. If you dont want to use simple spreadsheet gem or have any alternative gem to read spreadsheet file then you can create your own reader class by inheriting from BaseReader. You can call all simple-spreadsheet gem method on SimpleReader object.
 
   Example:
   ```ruby
@@ -63,15 +66,26 @@ If you want to use this reader add simple-spreadshee gem to your project. If you
 
   Note: SpreadsheetImport::SimpleReader includes Enumerable module. So you can use enumerable functions like each, select etc
 
-- Spreadsheetimport::BaseProcessor
-If you want to process data before importing it to db then create a new processor class which inherits from BaseProcessor.
+- Spreadsheetimport::BaseProcessor:
+
+  If you want to process data before importing it to db then create a new processor class which inherits from BaseProcessor.
   BaseProcessor constructor accepts following parameters
      1) reader: Reader class object
-     2) mapping: Mapping hash in format `{db_column_name1: column_number_in_spreadsheet, db_column_name1: column_number_in_spreadsheet}`.
+     2) mapping: database column name to spreadsheet column number mapping hash
      3) options: Following options are supported row_processor, row_validator and only_extract_valid_rows.
-        * row_processor:  Accepts a class which would be responsible for processing rows comming from `each_row` method of reader. Row Processor class should define `process` method. `process` method will called with unprocessed_row and current instance of data processor as arguments. unprocessed_row is in format `{db_column_name1: value_from_spreadsheet, db_column_name1: value_from_spreadsheet}`. `process` method should return hash in format
-`{db_column_name1: processed_value, db_column_name1: processed_value}`.
-There is alternative to process data other then providing row_processor option. You can inherit from BaseProcessor and add `process_row_before_import` method to your class. This method will recieve unprocessed_row and you should return processed row from it.
+        * row_processor:  Accepts a class which would be responsible for processing rows comming from `each_row` method of reader. Row Processor class should define `process` method. `process` method will called with unprocessed_row and current instance of data processor as arguments. unprocessed_row is in following format
+
+         ```ruby
+            {db_column_name1: value_from_spreadsheet, db_column_name1: value_from_spreadsheet}`.
+         ```
+
+          `process` method should return hash in below format.
+
+          ```ruby
+          {db_column_name1: processed_value, db_column_name1: processed_value}`
+         ```
+
+          There is alternative to process data other then providing row_processor option. You can inherit from BaseProcessor and add `process_row_before_import` method to your class. This method will recieve unprocessed_row and you should return processed row from it.
         * row_validator: Accepts a class which is responsible for validating a processed row. Row validator class should define `validate` method. This method is called with processed row returned from `process` method of row processor or `process_row_before_import` method and current instance of data processor as second argument. `validate` method should return true or false.
 There is alternative to validate data other then providing row_validatir option. You can inherit from BaseProcessor and add `valid_row_for_import?` method to your class. This method will recieve processed_row and you should return return true or false.
         * only_extract_valid_rows: If true `spreadsheet_rows` method will yield on rows that are valid otherwise it will yield each row. Row is valid or not is decided either by row_validator class `validate` method or by `valid_row_for_import?` method.
@@ -126,7 +140,7 @@ There is alternative to validate data other then providing row_validatir option.
 
   It defines `create_or_update_record` method called by `handle_valid_row`.
 
-- SpreadsheetImport::ActiveRecordImporter::BulkImporter: This importer utilizes activerecord-import gem. Its faster than SpreadsheetImport::ActiveRecordImporter::BaseImporter. It is recomended for large spreedsheet files. ActiveRecord callbacks will not be called when BulkImporter is used. It inherits from SpreadsheetImport::ActiveRecordImporter::BaseImporter, so its constructor supports same argument as SpreadsheetImport::ActiveRecordImporter::BaseImporter. Passing skip_callbacks as true or false doesn't have any effect and callbacks will always be skipped. This is a penalty that you have to pay for performance :). It also support addition option of batch_size. It is the number of records that would be inserted at once.
+- SpreadsheetImport::ActiveRecordImporter::BulkImporter: This importer utilizes activerecord-import gem. Its faster than SpreadsheetImport::ActiveRecordImporter::BaseImporter. It is recomended for large spreedsheet files. ActiveRecord callbacks will not be called when BulkImporter is used. It inherits from SpreadsheetImport::ActiveRecordImporter::BaseImporter, so its constructor supports same argument. Passing skip_callbacks as true or false doesn't have any effect and callbacks will always be skipped. This is a penalty that you have to pay for performance :). It also support addition option of batch_size. It is the number of records that would be inserted at once.
 Default batch size is 100.
 
 ## Development
