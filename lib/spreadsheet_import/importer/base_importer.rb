@@ -1,14 +1,14 @@
 module SpreadsheetImport
   class BaseImporter
-    attr_reader :model, :data_extractor
+    attr_reader :model, :data_processor
 
-    def initialize(model, options = {})
+    def initialize(model, data_processor, options = {})
       @model = model
-      @data_extractor = options[:data_extractor]
+      @data_processor = data_processor
     end
 
     def import
-      data_extractor.spreadsheet_rows do |row, valid|
+      data_processor.spreadsheet_rows do |row, valid|
         if valid
           handle_valid_row(row)
         else

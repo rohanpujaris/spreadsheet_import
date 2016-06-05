@@ -7,7 +7,7 @@ module SpreadsheetImport
       @start_row = options[:start_row] || 1
     end
 
-    def each_row
+    def each_row(_)
       raise 'each_row method must be implemented by SpreadsheetLoader::Reader subclass'
     end
   end

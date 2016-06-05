@@ -1,5 +1,7 @@
 module SpreadsheetImport
-  class BaseExtractor
+  class BaseProcessor
+    include Enumerable
+
     attr_reader :reader, :mapping, :row_processor, :row_validator,
       :only_extract_valid_rows
 
@@ -22,6 +24,7 @@ module SpreadsheetImport
         end
       end
     end
+    alias_method :each, :spreadsheet_rows
 
     protected
 

@@ -3,10 +3,10 @@ require 'activerecord-import'
 module SpreadsheetImport
   module ActiveRecordImporter
     class BulkImporter < BaseImporter
-      attr_reader :batch_size, :counter, :validate
+      attr_reader :batch_size
 
-      def initialize(model, options = {})
-        super(model, options.merge!(skip_callbacks: true))
+      def initialize(model, data_processor, options = {})
+        super(model, data_processor, options.merge!(skip_callbacks: true))
         @batch_size = options[:batch_size] || 100
         @batch = []
       end
@@ -32,7 +32,7 @@ module SpreadsheetImport
       end
 
       def execute_batch
-        model.import(data_extractor.mapping.keys,
+        model.import(data_processor.mapping.keys,
           @batch.map(&:values), validate: !skip_validations)
         @batch = []
       end

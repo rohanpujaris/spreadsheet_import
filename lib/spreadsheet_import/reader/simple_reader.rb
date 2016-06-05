@@ -2,6 +2,8 @@ require 'simple-spreadsheet'
 
 module SpreadsheetImport
   class SimpleReader < BaseReader
+    include Enumerable
+
     def initialize(file_url, options = {})
       super
       @spreadsheet = SimpleSpreadsheet::Workbook.read(file_url)
@@ -24,6 +26,7 @@ module SpreadsheetImport
         yield entire_row
       end
     end
+    alias_method :each, :each_row
 
     # delegate all methods to SimpleSpreadsheet gem
     def method_missing(method, *args)

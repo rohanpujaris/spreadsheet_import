@@ -6,7 +6,7 @@ module SpreadsheetImport
       attr_reader :skip_validations, :skip_callbacks, :unique_by_attributes,
         :update_existing_record, :scoped_unique
 
-      def initialize(model, options ={})
+      def initialize(model, data_processor, options ={})
         super
         @unique_by_attributes = options[:unique_by_attributes]
         @update_existing_record = if options[:update_existing_record].nil?
@@ -47,6 +47,7 @@ module SpreadsheetImport
       end
 
       def update_only_if_data_changed(records, data)
+        records = [records] if records.is_a?(ActiveRecord::Base)
         records.each do |record|
           if data.any? { |name, value| record.read_attribute(name) != value }
             record.update_attributes(data)
