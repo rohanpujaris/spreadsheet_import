@@ -95,11 +95,10 @@ There is alternative to validate data other then providing row_validatir option.
    Example:
 
    Consider below csv file
-   ```ruby
-     city,county,tax rate,
-     Palm Desert,Some county, 0.2,
-     Marine Corps*,Some county 2,0.9,
-   ```
+  
+    city,county,tax rate,
+    Palm Desert,Some county, 0.2,
+    Marine Corps*,Some county 2,0.9,
 
    ```ruby
     # Custome data processor
