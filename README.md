@@ -70,19 +70,20 @@ And then execute:
 
   If you want to process data before importing it to db then create a new processor class which inherits from BaseProcessor.
   BaseProcessor constructor accepts following parameters
-     1) reader: Reader class object
-     2) mapping: database column name to spreadsheet column number mapping hash
-     3) options: Following options are supported row_processor, row_validator and only_extract_valid_rows.
+
+     * reader: Reader class object
+     * mapping: database column name to spreadsheet column number mapping hash
+     * options: Following options are supported row_processor, row_validator and only_extract_valid_rows.
         * row_processor:  Accepts a class which would be responsible for processing rows comming from `each_row` method of reader. Row Processor class should define `process` method. `process` method will called with unprocessed_row and current instance of data processor as arguments. unprocessed_row is in following format
 
          ```ruby
-            {db_column_name1: value_from_spreadsheet, db_column_name1: value_from_spreadsheet}`.
+            {db_column_name1: value_from_spreadsheet, db_column_name1: value_from_spreadsheet}
          ```
 
           `process` method should return hash in below format.
 
           ```ruby
-          {db_column_name1: processed_value, db_column_name1: processed_value}`
+          {db_column_name1: processed_value, db_column_name1: processed_value}
          ```
 
           There is alternative to process data other then providing row_processor option. You can inherit from BaseProcessor and add `process_row_before_import` method to your class. This method will recieve unprocessed_row and you should return processed row from it.
@@ -90,10 +91,11 @@ And then execute:
 There is alternative to validate data other then providing row_validatir option. You can inherit from BaseProcessor and add `valid_row_for_import?` method to your class. This method will recieve processed_row and you should return return true or false.
         * only_extract_valid_rows: If true `spreadsheet_rows` method will yield on rows that are valid otherwise it will yield each row. Row is valid or not is decided either by row_validator class `validate` method or by `valid_row_for_import?` method.
 
+
    Example:
 
    Consider below csv file
-   ```
+   ```ruby
      city,county,tax rate,
      Palm Desert,Some county, 0.2,
      Marine Corps*,Some county 2,0.9,
