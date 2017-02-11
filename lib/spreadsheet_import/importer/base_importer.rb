@@ -20,9 +20,15 @@ module SpreadsheetImport
     protected
 
     def handle_valid_row(row)
-      create_or_update_record(row)
+      begin
+        create_or_update_record(row)
+      rescue Exception => e
+        handle_create_or_update_exception(row, e)
+      end
     end
 
     def handle_invalid_row(row); end
+
+    def handle_create_or_update_exception(row, e); end
   end
 end
